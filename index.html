@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSH Key & Installation Script Setup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .step {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .step h2 {
+      margin-top: 0;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    code {
+      background-color: #f4f4f4;
+      padding: 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SSH Key & Installation Script Setup</h1>
+
+  <div class="step">
+    <h2>1. Enter Your GitHub Username</h2>
+    <label for="username">GitHub Username:</label>
+    <input type="text" id="username" placeholder="your-username">
+    <button onclick="generateCommands()">Generate Commands</button>
+  </div>
+
+  <div class="step">
+    <h2>2. Find Your GitHub Noreply Email</h2>
+    <p>Go to <a href="https://github.com/settings/emails" target="_blank">GitHub email settings</a>.</p>
+    <p>Your noreply email will look like: <code>yourusername@users.noreply.github.com</code></p>
+  </div>
+
+  <div class="step">
+    <h2>3. Paste Your Noreply Email</h2>
+    <label for="noreply-email">Enter Your Noreply Email:</label>
+    <input type="text" id="noreply-email" placeholder="yourusername@users.noreply.github.com">
+    <button onclick="generateSSHKeyCommand()">Generate SSH Key Command</button>
+  </div>
+
+  <div class="step">
+    <h2>4. Generate SSH Key Command</h2>
+    <p>Run the following command in the terminal:</p>
+    <pre><code id="ssh-command">ssh-keygen -t rsa -b 4096 -C "yourusername@users.noreply.github.com"</code></pre>
+  </div>
+
+  <div class="step">
+    <h2>5. Copy Public Key to GitHub</h2>
+    <p>Copy the public key (<code>~/.ssh/id_rsa.pub</code>) and add it to your GitHub account by running the following command:</p>
+    <pre><code id="copy-pubkey-command">pbcopy < ~/.ssh/id_rsa.pub  # macOS</code></pre>
+    <p>For other systems, manually copy the contents of <code>~/.ssh/id_rsa.pub</code> and paste it into the <a href="https://github.com/settings/keys" target="_blank">GitHub SSH keys</a> page.</p>
+  </div>
+
+  <div class="step">
+    <h2>6. Run the Installation Script</h2>
+    <p>Once your SSH key is added, run the following command to fetch and execute the installation script:</p>
+    <pre><code id="run-command">curl -sSL https://github.com/YOUR_USERNAME/install-apps-private/raw/main/install-apps.sh | bash</code></pre>
+  </div>
+
+  <script>
+    const fixedRepoName = "install-apps-private";  // Fixed repository name
+
+    function generateCommands() {
+      var username = document.getElementById("username").value;
+      if (username) {
+        // Update the commands with the entered username
+        document.getElementById("run-command").textContent = `curl -sSL https://github.com/${username}/${fixedRepoName}/raw/main/install-apps.sh | bash`;
+      } else {
+        alert("Please enter your GitHub username.");
+      }
+    }
+
+    function generateSSHKeyCommand() {
+      var email = document.getElementById("noreply-email").value;
+      if (email && email.includes("@users.noreply.github.com")) {
+        var sshCommand = `ssh-keygen -t rsa -b 4096 -C "${email}"`;
+        document.getElementById("ssh-command").textContent = sshCommand;
+      } else {
+        alert("Please enter a valid GitHub noreply email.");
+      }
+    }
+  </script>
+
+</body>
+</html>
+
